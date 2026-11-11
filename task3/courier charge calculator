@@ -1,0 +1,61 @@
+#include <iostream>
+using namespace std;
+// Structure representing a parcel
+struct Parcel
+{
+    double weight;
+    bool express;
+    bool insured;
+};
+// Function for weight in grams
+double charge(int weightGrams)
+{
+    cout << "Integer overload selected: ";
+    return weightGrams * 0.05;
+}
+// Function for weight in kilograms with default arguments
+double charge(double weightKg,
+              bool express = false,
+              bool insured = false)
+{
+    cout << "Double overload selected: ";
+
+    double amount = weightKg * 50;
+    if (express)
+        amount += 30;
+    if (insured)
+        amount += 20;
+    return amount;
+}
+// Function for Parcel object
+double charge(const Parcel& p)
+{
+    cout << "Parcel overload selected: ";
+    return charge(p.weight, p.express, p.insured);
+}
+int main()
+{
+    cout << "Courier Charge Calculator" << endl;
+    cout << "-------------------------" << endl;
+    // Call 1
+    cout << "charge(500): ";
+    cout << charge(500) << endl;
+    // Call 2
+    cout << "charge(2): ";
+    cout << charge(2) << endl;
+    // Call 3
+    cout << "charge(2.0f): ";
+    cout << charge(2.0f) << endl;
+    // Call 4
+    cout << "charge(2.0): ";
+    cout << charge(2.0) << endl;
+
+    // Call 5
+    cout << "charge(2.0, true): ";
+    cout << charge(2.0, true) << endl;
+    // Call 6
+    Parcel p = {3.0, true, true};
+    cout << "charge(Parcel): ";
+    cout << charge(p) << endl;
+    return 0;
+}
