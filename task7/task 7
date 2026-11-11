@@ -1,0 +1,88 @@
+#include <iostream>
+#include <chrono>
+using namespace std;
+using namespace chrono;
+const int CAPACITY = 50;
+const int OPERATIONS = 1000000;
+// Original design: shifting array
+class OriginalHistory {
+    int transactions[CAPACITY];
+    int count;
+public:
+    OriginalHistory() {
+        count = 0;
+    }
+    void add(int value) {
+        if (count < CAPACITY) {
+            transactions[count] = value;
+            count++;
+        } else {
+            for (int i = 0; i < CAPACITY - 1; i++) {
+                transactions[i] = transactions[i + 1];
+            }
+            transactions[CAPACITY - 1] = value;
+        }
+    }
+    int latest() const {
+        return transactions[CAPACITY - 1];
+    }
+};
+// Redesigned design: circular array
+class CircularHistory {
+    int transactions[CAPACITY];
+    int start;
+    int count;
+public:
+    CircularHistory() {
+        start = 0;
+        count = 0;
+    }
+    void add(int value) {
+        if (count < CAPACITY) {
+            transactions[(start + count) % CAPACITY] = value;
+            count++;
+        } else {
+            transactions[start] = value;
+            start = (start + 1) % CAPACITY;
+        }
+    }
+    int latest() const {
+        return transactions[
+            (start + count - 1) % CAPACITY
+        ];
+    }
+};
+int main() {
+    OriginalHistory original;
+    CircularHistory redesigned;
+    volatile int result = 0;
+    auto start1 = high_resolution_clock::now();
+    for (int i = 0; i < OPERATIONS; i++) {
+        original.add(i);
+    }
+    auto stop1 = high_resolution_clock::now();
+    auto originalTime =
+        duration_cast<microseconds>(stop1 - start1).count();
+    result = original.latest();
+    auto start2 = high_resolution_clock::now();
+    for (int i = 0; i < OPERATIONS; i++) {
+        redesigned.add(i);
+    }
+    auto stop2 = high_resolution_clock::now();
+    auto redesignedTime =
+        duration_cast<microseconds>(stop2 - start2).count();
+    result = redesigned.latest();
+    cout << "Transaction History Comparison" << endl;
+    cout << "Capacity: " << CAPACITY << endl;
+    cout << "Transactions added: " << OPERATIONS << endl;
+    cout << "\nOriginal Shifting Array:" << endl;
+    cout << "Latest transaction: " << original.latest() << endl;
+    cout << "Execution time: " << originalTime
+         << " microseconds" << endl;
+    cout << "\nRedesigned Circular Array:" << endl;
+    cout << "Latest transaction: " << redesigned.latest() << endl;
+    cout << "Execution time: " << redesignedTime
+         << " microseconds" << endl;
+
+    return 0;
+}
