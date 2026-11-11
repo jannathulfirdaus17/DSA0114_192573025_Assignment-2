@@ -1,0 +1,68 @@
+#include <iostream>
+#include <string>
+using namespace std;
+class SavingsAccount {
+private:
+    int accountNumber;
+    double balance;
+    string transactions[10];
+    int transactionCount;
+public:
+    SavingsAccount(int accNo, double initialBalance) {
+        accountNumber = accNo;
+        balance = initialBalance;
+        transactionCount = 0;
+    }
+    void addTransaction(string transaction) {
+        if (transactionCount < 10) {
+            transactions[transactionCount] = transaction;
+            transactionCount++;
+        } else {
+            for (int i = 0; i < 9; i++) {
+                transactions[i] = transactions[i + 1];
+            }
+            transactions[9] = transaction;
+        }
+    }
+
+    void deposit(double amount);
+    void withdraw(double amount);
+    void miniStatement();
+};
+void SavingsAccount::deposit(double amount) {
+    if (amount > 0) {
+        balance += amount;
+        addTransaction("Deposit: +" + to_string(amount));
+        cout << "Deposit successful." << endl;
+    } else {
+        cout << "Invalid deposit amount." << endl;
+    }
+}
+void SavingsAccount::withdraw(double amount) {
+    if (amount > 0 && amount <= balance) {
+        balance -= amount;
+        addTransaction("Withdrawal: -" + to_string(amount));
+        cout << "Withdrawal successful." << endl;
+    } else {
+        cout << "Invalid withdrawal amount." << endl;
+    }
+}
+void SavingsAccount::miniStatement() {
+    cout << "\nAccount Number: " << accountNumber << endl;
+    cout << "Current Balance: " << balance << endl;
+    cout << "\nLast " << transactionCount
+         << " Transactions:" << endl;
+    for (int i = 0; i < transactionCount; i++) {
+        cout << transactions[i] << endl;
+    }
+}
+int main() {
+    SavingsAccount account(1001, 5000.00);
+    account.deposit(1000);
+    account.withdraw(500);
+    account.deposit(750);
+    account.withdraw(200);
+    account.deposit(300);
+    account.miniStatement();
+    return 0;
+}
