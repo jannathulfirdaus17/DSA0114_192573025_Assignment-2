@@ -1,0 +1,25 @@
+#include <iostream>
+#include <vector>
+using namespace std;
+int main()
+{
+    vector<int> marks;
+    marks.reserve(1);
+    marks.push_back(85);
+    int& ref = marks[0];
+    cout << "Original mark: " << ref << endl;
+    cout << "Capacity before growth: "
+         << marks.capacity() << endl;
+
+    size_t oldCapacity = marks.capacity();
+    while (marks.size() <= oldCapacity)
+    {
+        marks.push_back(90);
+    }
+    cout << "Capacity after growth: "
+         << marks.capacity() << endl;
+    cout << "Vector size: " << marks.size() << endl;
+    cout << "Reference may now be invalid due to reallocation."
+         << endl;
+    return 0;
+}
